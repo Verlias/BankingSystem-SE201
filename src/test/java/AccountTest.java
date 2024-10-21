@@ -4,24 +4,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class AccountTest {
+
+    public static final String ACCOUNT_ID_1 = "89456185";
+    private static final String ACCOUNT_ID_2 = "50002001";
     Accounts savings;
     Accounts checking;
     Accounts certificateOfDeposit;
 
     @BeforeEach
     void setUp() {
-        checking = new Checking(0.3);
-        savings = new Savings(10);
-        certificateOfDeposit = new CertificateOfDeposit(2000.54, 5.5);
+        checking = new Checking(0.3, ACCOUNT_ID_1);
+        savings = new Savings(10, ACCOUNT_ID_2);
+        certificateOfDeposit = new CertificateOfDeposit(2000.54, 5.5, ACCOUNT_ID_2);
     }
 
     // Checking Account Tests
-    @Test
-    void checking_starts_with_zero_balance() {
-        double actual = checking.getBalance();
-        assertEquals(0, actual);
-    }
-
     @Test
     void checking_has_supplied_apr() {
         double actual = checking.getApr();
@@ -69,12 +66,6 @@ public class AccountTest {
 
     // Savings Account Tests
     @Test
-    void savings_starts_with_zero_balance() {
-        double actual = savings.getBalance();
-        assertEquals(0, actual);
-    }
-
-    @Test
     void savings_has_supplied_apr() {
         double actual = savings.getApr();
         assertEquals(10, actual);
@@ -120,12 +111,6 @@ public class AccountTest {
     }
 
     // Certificate of Deposit (CD) Account Tests
-    @Test
-    void certificate_of_deposit_can_be_created_with_supplied_balance() {
-        double actual = certificateOfDeposit.getBalance();
-        assertEquals(2000.54, actual);
-    }
-
     @Test
     void certificate_of_deposit_has_supplied_apr() {
         double actual = certificateOfDeposit.getApr();

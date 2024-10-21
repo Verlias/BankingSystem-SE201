@@ -12,8 +12,8 @@ public class Bank {
         return accounts;
     }
 
-    public void addAccount(String ID, Accounts account) {
-        accounts.put(ID, account);
+    public void addAccount(String id, Accounts account) {
+        accounts.put(id, account);
     }
 
     public int getNumberOfAccounts() {
