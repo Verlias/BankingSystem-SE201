@@ -25,7 +25,6 @@ test {
 jacocoTestReport {
     reports {
         xml.required = true
-        xml.destination = project.file("builds/jacoco/jacoco.xml")
-    }
+        xml.outputLocation.set(project.file("builds/jacoco/jacoco.xml"))    }
 }
 
