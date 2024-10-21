@@ -3,9 +3,12 @@ public abstract class Accounts {
     private final double apr;
     private double balance;
 
-    public Accounts(double balance, double apr) {
+    private final String id;
+
+    public Accounts(double balance, double apr, String id) {
         this.balance = balance;
         this.apr = apr;
+        this.id = id;
     }
 
     public double getBalance() {
@@ -28,4 +31,7 @@ public abstract class Accounts {
         }
     }
 
+    public String getId() {
+        return id;
+    }
 }
