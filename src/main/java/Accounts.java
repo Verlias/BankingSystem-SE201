@@ -35,14 +35,4 @@ public abstract class Accounts {
         return id;
     }
 
-    public void setApr(double apr) {
-        // Clamp APR between 0.0 and 10.0
-        if (apr < 0.0) {
-            this.apr = 0.0;
-        } else if (apr > 10.0) {
-            this.apr = 10.0;
-        } else {
-            this.apr = apr;
-        }
-    }
 }

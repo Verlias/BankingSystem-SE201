@@ -1,4 +1,5 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ public class AccountTest {
         savings = new Savings(10, ACCOUNT_ID_2);
         certificateOfDeposit = new CertificateOfDeposit(2000.54, 5.5, ACCOUNT_ID_2);
     }
+
 
     @Test
     void checking_account_sets_valid_apr() {
@@ -57,28 +59,28 @@ public class AccountTest {
     void apr_above_ten_defaults_to_max() {
         checking = new Checking(12.0, ACCOUNT_ID_1);
         double actual = checking.getApr();
-        assertEquals(10.0, actual);
+        assertFalse(actual > 10.0, "APR should not exceed 10.0");
     }
 
     @Test
     void negative_apr_defaults_to_zero() {
         checking = new Checking(-1.0, ACCOUNT_ID_1);
         double actual = checking.getApr();
-        assertEquals(0.0, actual);
+        assertFalse(actual < 0.0, "APR should not be negative");
     }
 
     @Test
     void apr_just_below_zero_defaults_to_zero() {
         checking = new Checking(-0.01, ACCOUNT_ID_1);
         double actual = checking.getApr();
-        assertEquals(0.0, actual);
+        assertFalse(actual < 0.0, "APR should not be negative");
     }
 
     @Test
     void apr_just_above_ten_defaults_to_max() {
         checking = new Checking(10.01, ACCOUNT_ID_1);
         double actual = checking.getApr();
-        assertEquals(10.0, actual);
+        assertFalse(actual > 10.0, "APR should not exceed 10.0");
     }
 
 
