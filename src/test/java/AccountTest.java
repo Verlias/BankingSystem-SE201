@@ -18,6 +18,71 @@ public class AccountTest {
         certificateOfDeposit = new CertificateOfDeposit(2000.54, 5.5, ACCOUNT_ID_2);
     }
 
+    @Test
+    void checking_account_sets_valid_apr() {
+        checking = new Checking(5.0, ACCOUNT_ID_1);
+        double actual = checking.getApr();
+        assertEquals(5.0, actual);
+    }
+
+    @Test
+    void savings_account_sets_valid_apr() {
+        savings = new Savings(3.50, ACCOUNT_ID_1);
+        double actual = savings.getApr();
+        assertEquals(3.5, actual);
+    }
+
+    @Test
+    void cd_account_sets_valid_apr() {
+        certificateOfDeposit = new CertificateOfDeposit(1000.0, 2.5, ACCOUNT_ID_1);
+        double actual = certificateOfDeposit.getApr();
+        assertEquals(2.5, actual);
+    }
+
+    @Test
+    void apr_at_zero_is_accepted() {
+        checking = new Checking(0.0, ACCOUNT_ID_1);
+        double actual = checking.getApr();
+        assertEquals(0.0, actual);
+    }
+
+    @Test
+    void apr_at_upper_limit_is_accepted() {
+        checking = new Checking(10.0, ACCOUNT_ID_1);
+        double actual = checking.getApr();
+        assertEquals(10.0, actual);
+    }
+
+    @Test
+    void apr_above_ten_defaults_to_max() {
+        checking = new Checking(12.0, ACCOUNT_ID_1);
+        double actual = checking.getApr();
+        assertEquals(10.0, actual);
+    }
+
+    @Test
+    void negative_apr_defaults_to_zero() {
+        checking = new Checking(-1.0, ACCOUNT_ID_1);
+        double actual = checking.getApr();
+        assertEquals(0.0, actual);
+    }
+
+    @Test
+    void apr_just_below_zero_defaults_to_zero() {
+        checking = new Checking(-0.01, ACCOUNT_ID_1);
+        double actual = checking.getApr();
+        assertEquals(0.0, actual);
+    }
+
+    @Test
+    void apr_just_above_ten_defaults_to_max() {
+        checking = new Checking(10.01, ACCOUNT_ID_1);
+        double actual = checking.getApr();
+        assertEquals(10.0, actual);
+    }
+
+
+
     // Checking Account Tests
     @Test
     void checking_has_supplied_apr() {
