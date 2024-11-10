@@ -1,4 +1,9 @@
 public class CommandValidator {
+    private Bank bank;
+
+    public CommandValidator(Bank bank) {
+        this.bank = bank;
+    }
 
     public boolean validate(String command) {
         if (!command.startsWith("create")) {
@@ -13,6 +18,11 @@ public class CommandValidator {
 
         String accountId = parts[1];
         if (accountId.length() != 8 || !accountId.matches("\\d+")) {
+            return false;
+        }
+
+        // Check if accountId already exists in the bank
+        if (bank.accountExists(accountId)) {
             return false;
         }
 
