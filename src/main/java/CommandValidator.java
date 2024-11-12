@@ -10,7 +10,7 @@ public class CommandValidator {
             return false;
         }
 
-        String[] parts = command.split("\\s+");
+        String[] parts = command.trim().split("\\s+");
 
         if (parts.length != 4) {
             return false;
@@ -18,11 +18,7 @@ public class CommandValidator {
 
         String accountType = parts[1].trim().toLowerCase();
         String accountId = parts[2].trim();
-        String apr = parts[3].trim();
-
-        System.out.println("Account Type: " + accountType);
-        System.out.println("Account ID: " + accountId);
-        System.out.println("APR: " + apr);
+        String aprString = parts[3].trim();
 
         if (!accountType.equals("cd") && !accountType.equals("checking") && !accountType.equals("saving")) {
             return false;
@@ -32,17 +28,22 @@ public class CommandValidator {
             return false;
         }
 
+        double apr;
         try {
-            Double.parseDouble(apr);
+            apr = Double.parseDouble(aprString);
+            if (apr < 0.0 || apr > 10.0) {
+                return false;
+            }
         } catch (NumberFormatException e) {
             return false;
         }
 
+        // Ensure account does not already exist
         if (bank.accountExists(accountId)) {
             return false;
         }
 
+        // All checks passed
         return true;
     }
-
 }

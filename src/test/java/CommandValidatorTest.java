@@ -107,4 +107,10 @@ public class CommandValidatorTest {
         boolean actual = commandValidator.validate("random text here");
         assertFalse(actual, "Command with random text should be invalid");
     }
+
+    @Test
+    void negative_apr_value() {
+        boolean actual = commandValidator.validate("create Checking 89456185 -5.0");
+        assertFalse(actual, "APR must be a non-negative decimal number");
+    }
 }
