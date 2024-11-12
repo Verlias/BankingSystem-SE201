@@ -15,6 +15,7 @@ public class CommandProcessorTest {
     }
 
     //Account Creation Testing
+    //TODO: Implement functionality to give specific balance for accounts
     @Test
     void create_checking_account_type() {
         commandProcessor.process("create Checking 12345678 3.5");

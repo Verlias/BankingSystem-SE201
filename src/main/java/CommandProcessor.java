@@ -63,7 +63,7 @@ public class CommandProcessor {
                 account = new Savings(apr, id);
                 break;
             case "cd":
-                double initialCdBalance = 1000.0; // Example initial balance for a CD account
+                double initialCdBalance = 1000.0;
                 account = new CertificateOfDeposit(initialCdBalance, apr, id);
                 break;
             default:

@@ -14,6 +14,8 @@ public class CommandValidatorTest {
         commandValidator = new CommandValidator(bank);
     }
 
+    //TODO2: Implement functionality to allow for accounts to be created with balance besides Checking and Savings
+
     @Test
     void valid_create_command() {
         boolean actual = commandValidator.validate("create Checking 89456185 5.0");
