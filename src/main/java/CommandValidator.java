@@ -38,12 +38,10 @@ public class CommandValidator {
             return false;
         }
 
-        // Ensure account does not already exist
         if (bank.accountExists(accountId)) {
             return false;
         }
 
-        // All checks passed
         return true;
     }
 }
