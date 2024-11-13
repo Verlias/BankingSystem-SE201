@@ -22,7 +22,7 @@ public class CommandValidator {
         String accountId = parts[2].trim();
         String aprString = parts[3].trim();
 
-        if (!accountType.equals("cd") && !accountType.equals("checking") && !accountType.equals("saving")) {
+        if (!accountType.equals("banking.cd") && !accountType.equals("banking.checking") && !accountType.equals("banking.saving")) {
             return false;
         }
 

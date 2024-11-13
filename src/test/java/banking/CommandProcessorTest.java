@@ -22,7 +22,7 @@ public class CommandProcessorTest {
     void create_checking_account_type() {
         commandProcessor.process("create banking.Checking 12345678 3.5");
         String actual = bank.getAccount().get("12345678").getClass().getSimpleName();
-        assertEquals("banking.Checking", actual, "Account should be of type banking.Checking");
+        assertEquals("Checking", actual, "Account should be of type banking.Checking");
     }
 
     @Test
@@ -50,7 +50,7 @@ public class CommandProcessorTest {
     void create_savings_account_type() {
         commandProcessor.process("create banking.Savings 87654321 2.5");
         String actual = bank.getAccount().get("87654321").getClass().getSimpleName();
-        assertEquals("banking.Savings", actual, "Account should be of type banking.Savings");
+        assertEquals("Savings", actual, "Account should be of type banking.Savings");
     }
 
     @Test
@@ -78,7 +78,7 @@ public class CommandProcessorTest {
     void create_cd_account_type() {
         commandProcessor.process("create CD 11223344 1.5");
         String actual = bank.getAccount().get("11223344").getClass().getSimpleName();
-        assertEquals("banking.CertificateOfDeposit", actual, "Account should be of type banking.CertificateOfDeposit");
+        assertEquals("CertificateOfDeposit", actual, "Account should be of type banking.CertificateOfDeposit");
     }
 
     @Test

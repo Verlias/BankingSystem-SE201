@@ -58,10 +58,10 @@ public class CommandProcessor {
 
         Accounts account;
         switch (accountType) {
-            case "checking":
+            case "banking.checking":
                 account = new Checking(apr, id);
                 break;
-            case "savings":
+            case "banking.savings":
                 account = new Savings(apr, id);
                 break;
             case "cd":

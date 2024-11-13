@@ -54,16 +54,16 @@ public class AccountTest {
 
     @Test
     void account_id_must_be_eight_digits() {
-        boolean isValidShort = isValidAccountId(INVALID_SHORT_ID); // Check for length validation
+        boolean isValidShort = isValidAccountId(INVALID_SHORT_ID);
         assertFalse(isValidShort, "Account ID must be 8 digits long");
 
-        boolean isValidLong = isValidAccountId(INVALID_LONG_ID); // Check for length validation
+        boolean isValidLong = isValidAccountId(INVALID_LONG_ID);
         assertFalse(isValidLong, "Account ID must be 8 digits long");
     }
 
     @Test
     void account_id_must_only_contain_digits() {
-        boolean isValidDigits = isValidAccountId(INVALID_CHAR_ID); // Check for digit validation
+        boolean isValidDigits = isValidAccountId(INVALID_CHAR_ID);
         assertFalse(isValidDigits, "Account ID must contain only digits");
     }
 
