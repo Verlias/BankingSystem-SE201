@@ -1,3 +1,5 @@
+package banking;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -104,7 +106,7 @@ public class AccountTest {
 
 
 
-    // Checking Account Tests
+    // banking.Checking Account Tests
     @Test
     void checking_has_supplied_apr() {
         double actual = checking.getApr();
@@ -150,7 +152,7 @@ public class AccountTest {
         assertEquals(10, actual);
     }
 
-    // Savings Account Tests
+    // banking.Savings Account Tests
     @Test
     void savings_has_supplied_apr() {
         double actual = savings.getApr();

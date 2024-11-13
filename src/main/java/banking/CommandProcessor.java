@@ -1,3 +1,5 @@
+package banking;
+
 public class CommandProcessor {
 
     private final Bank bank;
@@ -98,14 +100,14 @@ public class CommandProcessor {
         switch (accountType) {
             case "checking":
                 if (amount > 1000) {
-                    System.out.println("Deposit amount exceeds limit for Checking account. Max: $1000");
+                    System.out.println("Deposit amount exceeds limit for banking.Checking account. Max: $1000");
                     return;
                 }
                 break;
 
             case "savings":
                 if (amount > 2500) {
-                    System.out.println("Deposit amount exceeds limit for Savings account. Max: $2500");
+                    System.out.println("Deposit amount exceeds limit for banking.Savings account. Max: $2500");
                     return;
                 }
                 break;

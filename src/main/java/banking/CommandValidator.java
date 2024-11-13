@@ -1,3 +1,5 @@
+package banking;
+
 public class CommandValidator {
     private final Bank bank;
 
