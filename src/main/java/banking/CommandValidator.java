@@ -8,42 +8,13 @@ public class CommandValidator {
     }
 
     public boolean validate(String command) {
-        if (!command.startsWith("create")) {
-            return false;
+        if (command.startsWith("create")) {
+            CreateCommandValidator createValidator = new CreateCommandValidator(bank);
+            return createValidator.validate(command);
+        } else if (command.startsWith("deposit")) {
+            DepositCommandValidator depositValidator = new DepositCommandValidator(bank);
+            return depositValidator.validate(command);
         }
-
-        String[] parts = command.trim().split("\\s+");
-
-        if (parts.length != 4) {
-            return false;
-        }
-
-        String accountType = parts[1].trim().toLowerCase();
-        String accountId = parts[2].trim();
-        String aprString = parts[3].trim();
-
-        if (!accountType.equals("banking.cd") && !accountType.equals("banking.checking") && !accountType.equals("banking.saving")) {
-            return false;
-        }
-
-        if (accountId.length() != 8 || !accountId.matches("\\d+")) {
-            return false;
-        }
-
-        double apr;
-        try {
-            apr = Double.parseDouble(aprString);
-            if (apr < 0.0 || apr > 10.0) {
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            return false;
-        }
-
-        if (bank.accountExists(accountId)) {
-            return false;
-        }
-
-        return true;
+        return false;
     }
 }
