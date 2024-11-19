@@ -21,7 +21,7 @@ public class DepositCommandValidator {
         String accountId = parts[1];
         String amountString = parts[2];
 
-        System.out.println("Amount String: " + amountString);  // Add this for debugging
+        System.out.println("Amount String: " + amountString);
 
         if (!keyword.equalsIgnoreCase("deposit")) {
             return false;
