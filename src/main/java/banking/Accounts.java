@@ -48,4 +48,7 @@ public abstract class Accounts {
         }
     }
 
+    public abstract String getAccountType();
+
+
 }

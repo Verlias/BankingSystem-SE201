@@ -32,13 +32,39 @@ public class DepositCommandValidator {
         double amount;
         try {
             amount = Double.parseDouble(amountString);
-            if (amount <= 0) {
-                System.out.println("Deposit amount must be greater than zero.");
+            if (amount < 0) {
+                System.out.println("Deposit amount cannot be negative.");
                 return false;
             }
         } catch (NumberFormatException e) {
             System.out.println("Invalid deposit amount: " + amountString);
             return false;
+        }
+
+        String accountType = bank.getAccountType(accountId);
+
+        switch (accountType.toLowerCase()) {
+            case "banking.saving":
+                if (amount > 2500 || amount == 0) {
+                    System.out.println("Deposit amount exceeds the $2500 limit for savings accounts.");
+                    return false;
+                }
+                break;
+
+            case "banking.checking":
+                if (amount > 1000 || amount == 0) {
+                    System.out.println("Deposit amount exceeds the $1000 limit for checking accounts.");
+                    return false;
+                }
+                break;
+
+            case "banking.cd":
+                System.out.println("Deposits are not allowed for Certificate of Deposit (CD) accounts.");
+                return false;
+
+            default:
+                System.out.println("Unknown account type for account ID " + accountId);
+                return false;
         }
 
         return true;

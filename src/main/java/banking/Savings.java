@@ -7,4 +7,9 @@ public class Savings extends Accounts {
         setApr(apr);
     }
 
+    @Override
+    public String getAccountType() {
+        return "banking.saving";
+    }
+
 }

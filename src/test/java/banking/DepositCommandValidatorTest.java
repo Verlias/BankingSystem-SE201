@@ -62,7 +62,7 @@ public class DepositCommandValidatorTest {
     }
 
     @Test
-    void zero_deposit_amount() {
+    void checking_zero_deposit_amount() {
         boolean actual = depositCommandValidator.validate("deposit 89456185 0.0");
         assertFalse(actual, "Deposit amount must be greater than zero");
     }

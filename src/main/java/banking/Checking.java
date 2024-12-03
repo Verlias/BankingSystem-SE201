@@ -5,5 +5,8 @@ public class Checking extends Accounts {
         super(0, 0, id);
         setApr(apr);
     }
-
+    @Override
+    public String getAccountType() {
+        return "banking.checking";
+    }
 }

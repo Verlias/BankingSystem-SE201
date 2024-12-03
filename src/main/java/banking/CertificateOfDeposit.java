@@ -8,4 +8,9 @@ public class CertificateOfDeposit extends Accounts {
 
     }
 
+    @Override
+    public String getAccountType() {
+        return "banking.cd";
+    }
+
 }
