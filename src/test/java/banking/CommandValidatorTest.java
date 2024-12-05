@@ -154,4 +154,17 @@ public class CommandValidatorTest {
         assertTrue(actual, "APR without decimal point (like '5') should be considered valid");
     }
 
+    @Test
+    void valid_account_type_cd() {
+        boolean actual = commandValidator.validate("create banking.cd 12345678 2.5");
+        assertTrue(actual, "Account type 'CD' should be valid");
+    }
+
+    @Test
+    void valid_account_id_with_leading_zeros() {
+        boolean actual = commandValidator.validate("create banking.Checking 00123456 5.0");
+        assertTrue(actual, "Account ID with leading zeros should be valid");
+    }
+
+
 }
