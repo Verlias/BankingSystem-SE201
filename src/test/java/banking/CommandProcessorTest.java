@@ -17,7 +17,6 @@ public class CommandProcessorTest {
     }
 
     //Account Creation Testing
-    //TODO: Implement functionality to give specific balance for accounts
     @Test
     void create_checking_account_type() {
         commandProcessor.process("create banking.Checking 12345678 3.5");
@@ -138,6 +137,32 @@ public class CommandProcessorTest {
         double actual = bank.getAccount().get("11223344").getBalance();
         assertEquals(1000.0, actual, 0.01, "Deposits should not be allowed for CD accounts, so the balance should remain at the initial amount.");
     }
+
+
+
+    @Test
+    void withdraw_from_checking_account_exceeds_balance() {
+        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("deposit 12345678 1000.0");
+        commandProcessor.process("withdraw 12345678 1500.0");
+        double actual = bank.getAccount().get("12345678").getBalance();
+        assertEquals(1000.0, actual, 0.01, "Balance should remain 1000.0 as withdrawal exceeds balance");
+    }
+
+    @Test
+    void withdraw_from_savings_account_exceeds_balance() {
+        commandProcessor.process("create banking.Savings 87654321 2.5");
+        commandProcessor.process("deposit 87654321 2500.0");
+        commandProcessor.process("withdraw 87654321 3000.0");
+        double actual = bank.getAccount().get("87654321").getBalance();
+        assertEquals(2500.0, actual, 0.01, "Balance should remain 2500.0 as withdrawal exceeds balance");
+    }
+
+
+
+
+
+
 
 
 
