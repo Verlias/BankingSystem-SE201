@@ -17,6 +17,7 @@ public class CommandHistoryTest {
         commandHistory = new CommandHistory();
     }
 
+    // Invalid command tests
     @Test
     void add_single_invalid_command() {
         commandHistory.addInvalidCommand("invalid command 1");
@@ -50,5 +51,41 @@ public class CommandHistoryTest {
         List<String> retrievedCommands = commandHistory.getInvalidCommands();
         retrievedCommands.clear();
         assertEquals(1, commandHistory.getInvalidCommands().size(), "Original list should be unaffected by external modifications");
+    }
+
+    // Valid command tests
+    @Test
+    void add_single_valid_command() {
+        commandHistory.addValidCommand("valid command 1");
+        assertEquals(1, commandHistory.getValidCommands().size(), "Should contain one valid command");
+    }
+
+    @Test
+    void add_multiple_valid_commands() {
+        commandHistory.addValidCommand("valid command 1");
+        commandHistory.addValidCommand("valid command 2");
+        assertEquals(2, commandHistory.getValidCommands().size(), "Should contain two valid commands");
+    }
+
+    @Test
+    void contains_specific_valid_command_1() {
+        commandHistory.addValidCommand("valid command 1");
+        List<String> commands = commandHistory.getValidCommands();
+        assertTrue(commands.contains("valid command 1"), "List should contain 'valid command 1'");
+    }
+
+    @Test
+    void contains_specific_valid_command_2() {
+        commandHistory.addValidCommand("valid command 2");
+        List<String> commands = commandHistory.getValidCommands();
+        assertTrue(commands.contains("valid command 2"), "List should contain 'valid command 2'");
+    }
+
+    @Test
+    void get_valid_commands_returns_copy() {
+        commandHistory.addValidCommand("valid command");
+        List<String> retrievedCommands = commandHistory.getValidCommands();
+        retrievedCommands.clear();
+        assertEquals(1, commandHistory.getValidCommands().size(), "Original list should be unaffected by external modifications");
     }
 }
