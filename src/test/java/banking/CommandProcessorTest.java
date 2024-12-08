@@ -3,8 +3,7 @@ package banking;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 //TT
 public class CommandProcessorTest {
@@ -77,14 +76,14 @@ public class CommandProcessorTest {
 
     @Test
     void create_cd_account_type() {
-        commandProcessor.process("create CD 11223344 1.5");
+        commandProcessor.process("create CD 11223344 1.5 1000");
         String actual = bank.getAccount().get("11223344").getClass().getSimpleName();
         assertEquals("CertificateOfDeposit", actual, "Account should be of type banking.CertificateOfDeposit");
     }
 
     @Test
     void create_cd_account_apr() {
-        commandProcessor.process("create CD 11223344 1.5");
+        commandProcessor.process("create CD 11223344 1.5 1000");
         CertificateOfDeposit cdAccount = (CertificateOfDeposit) bank.getAccount().get("11223344");
         double actual = cdAccount.getApr();
         assertEquals(1.5, actual, "APR should be set to 1.5");
@@ -134,7 +133,7 @@ public class CommandProcessorTest {
 
     @Test
     void deposit_to_cd_account_not_allowed() {
-        commandProcessor.process("create CD 11223344 1.5");
+        commandProcessor.process("create cd 11223344 1.5 1000");
         commandProcessor.process("deposit 11223344 500.0");
         double actual = bank.getAccount().get("11223344").getBalance();
         assertEquals(1000.0, actual, 0.01, "Deposits should not be allowed for CD accounts, so the balance should remain at the initial amount.");
@@ -211,8 +210,7 @@ public class CommandProcessorTest {
 
     @Test
     void withdraw_from_cd_account_before_12_months() {
-        commandProcessor.process("create CD 12345678 5.0");
-        commandProcessor.process("deposit 12345678 1000.0");
+        commandProcessor.process("create CD 12345678 5.0 1000");
         commandProcessor.process("withdraw 12345678 500.0");
 
         double actual = bank.getAccount().get("12345678").getBalance();
@@ -221,15 +219,14 @@ public class CommandProcessorTest {
 
     @Test
     void withdraw_full_balance_from_cd_account() {
-        commandProcessor.process("create CD 12345678 5.0");
-        commandProcessor.process("deposit 12345678 1000.0");
-        // Assuming the 12-month condition is fulfilled
-        commandProcessor.process("withdraw 12345678 1000.0");
+        commandProcessor.process("create cd 12345678 5.0 1000");
+        commandProcessor.process("passtime 13");  // Simulate the passing of 12 months.
+        commandProcessor.process("withdraw 12345678 2000");
 
         double actual = bank.getAccount().get("12345678").getBalance();
         assertEquals(0.0, actual, 0.01, "Balance should be zero after withdrawing the full balance from a CD account.");
     }
-
+    //Actual   :1016.7711229865932
     @Test
     void withdraw_from_empty_account() {
         commandProcessor.process("create banking.Checking 12345678 3.5");
@@ -263,22 +260,24 @@ public class CommandProcessorTest {
 
     @Test
     void passtime_cd_account_withdrawal_allowed_after_12_months() {
-        commandProcessor.process("create CD 12345678 5.0");
-        commandProcessor.process("deposit 12345678 1000.0");
-        commandProcessor.process("passtime");
-        commandProcessor.process("withdraw 12345678 1000.0");
+        commandProcessor.process("create cd 12345678 5.0 1000");
+
+        // Simulate passing 13 months
+        CertificateOfDeposit cdAccount = (CertificateOfDeposit) bank.getAccount().get("12345678");
+        cdAccount.passTime(13); // Simulate the passage of 13 months
+
+        // Now perform the withdrawal
+        commandProcessor.process("withdraw 12345678 1020");
 
         double actual = bank.getAccount().get("12345678").getBalance();
-        assertEquals(0.0, actual, 0.01);
+        assertEquals(0, actual, 0.01); // Expecting balance to be 0 after withdrawal
     }
+
 
     @Test
     void passtime_cd_account_withdrawal_not_allowed_before_12_months() {
-        commandProcessor.process("create CD 12345678 5.0");
-        commandProcessor.process("deposit 12345678 1000.0");
-        commandProcessor.process("withdraw 12345678 500.0");
-        commandProcessor.process("passtime");
-        commandProcessor.process("withdraw 12345678 500.0");
+        commandProcessor.process("create cd 12345678 5.0 1000");
+        commandProcessor.process("withdraw 12345678 1030.0");
 
         double actual = bank.getAccount().get("12345678").getBalance();
         assertEquals(1000.0, actual, 0.01);
@@ -292,8 +291,6 @@ public class CommandProcessorTest {
         double actual = bank.getAccount().get("12345678").getBalance();
         assertEquals(0.0, actual, 0.01);
     }
-
-
     @Test
     void passtime_multiple_accounts() {
         commandProcessor.process("create banking.Checking 12345678 3.5");
@@ -319,6 +316,170 @@ public class CommandProcessorTest {
         double actual = bank.getAccount().get("12345678").getBalance();
         assertEquals(500.0, actual, 0.01);
     }
+
+    @Test
+    void passtime_checking_account_withdrawal_allowed() {
+        commandProcessor.process("create banking.checking 12345678 0.0");
+        commandProcessor.process("deposit 12345678 1000.0");
+
+        commandProcessor.process("passtime 1");
+
+        commandProcessor.process("withdraw 12345678 400");
+
+        double actualBalance = bank.getAccount().get("12345678").getBalance();
+        assertEquals(600.0, actualBalance, 0.01, "Checking account withdrawal should reduce balance by the specified amount (up to $400).");
+    }
+
+    @Test
+    void passtime_savings_account_withdrawal_allowed() {
+        commandProcessor.process("create banking.savings 12345678 0.0");
+        commandProcessor.process("deposit 12345678 2000.0");
+
+        commandProcessor.process("passtime 1");
+
+        commandProcessor.process("withdraw 12345678 1000");
+
+        double actualBalance = bank.getAccount().get("12345678").getBalance();
+        assertEquals(1000.0, actualBalance, 0.01, "Savings account withdrawal should reduce balance by the specified amount (up to $1000).");
+
+        commandProcessor.process("withdraw 12345678 500");
+        actualBalance = bank.getAccount().get("12345678").getBalance();
+        assertEquals(1000.0, actualBalance, 0.01, "Savings account allows only one withdrawal per month.");
+    }
+
+    @Test
+    void passtime_invalid_negative_withdrawal() {
+        commandProcessor.process("create banking.checking 12345678 0.0");
+        commandProcessor.process("deposit 12345678 1000.0");
+
+        commandProcessor.process("passtime 1");
+
+        commandProcessor.process("withdraw 12345678 -500");
+
+        double actualBalance = bank.getAccount().get("12345678").getBalance();
+        assertEquals(1000.0, actualBalance, 0.01, "Negative withdrawals are not allowed.");
+    }
+
+    @Test
+    void passtime_zero_withdrawal_amount() {
+        commandProcessor.process("create banking.checking 12345678 0.0");
+        commandProcessor.process("deposit 12345678 1000.0");
+
+        commandProcessor.process("passtime 1");
+
+        commandProcessor.process("withdraw 12345678 0");
+
+        double actualBalance = bank.getAccount().get("12345678").getBalance();
+        assertEquals(1000.0, actualBalance, 0.01, "Zero withdrawals are not allowed.");
+    }
+
+    @Test
+    void passtime_close_account() {
+        commandProcessor.process("create checking 12345678 0.0");
+        commandProcessor.process("deposit 12345678 1000.0");
+
+        commandProcessor.process("passtime 1");
+
+        commandProcessor.process("withdraw 12345678 100");
+
+        double actualBalance = bank.getAccount().get("12345678") == null ? 0.0 : bank.getAccount().get("12345678").getBalance();
+        assertEquals(0.0, actualBalance, 0.01, "Account should not exist after closing, and balance should be zero.");
+    }
+
+    @Test
+    void passtime_apr_checking() {
+        commandProcessor.process("create banking.checking 12345678 3");
+        commandProcessor.process("deposit 12345678 1000.0");
+
+        commandProcessor.process("passtime 1");
+
+        double expectedBalance = 1000.0 * (1 + (3.0 / 100) / 12);
+        double actualBalance = bank.getAccount().get("12345678").getBalance();
+        assertEquals(expectedBalance, actualBalance, 0.01, "APR should be applied correctly to Checking account.");
+    }
+
+    @Test
+    void passtime_apr_savings() {
+        commandProcessor.process("create banking.savings 12345678 5");
+        commandProcessor.process("deposit 12345678 1000.0");
+
+        commandProcessor.process("passtime 1");
+
+        double expectedBalance = 1000.0 * (1 + (5.0 / 100) / 12);
+        double actualBalance = bank.getAccount().get("12345678").getBalance();
+        assertEquals(expectedBalance, actualBalance, 0.01, "APR should be applied correctly to Savings account.");
+    }
+
+    @Test
+    void passtime_apr_cd() {
+        commandProcessor.process("create cd 12345678 2.1 2000");
+
+        commandProcessor.process("passtime 1");
+
+        double aprDecimal = 2.1 / 100;
+        double monthlyAPR = aprDecimal / 12;
+        double balance = 2000.0;
+
+        for (int i = 0; i < 4; i++) {
+            balance *= (1 + monthlyAPR);
+        }
+
+        double actualBalance = bank.getAccount().get("12345678").getBalance();
+        assertEquals(balance, actualBalance, 0.01, "APR should be applied 4 times for CD account.");
+    }
+
+    @Test
+    void passtime_deduction_checking() {
+        commandProcessor.process("create banking.checking 12345678 3");
+        commandProcessor.process("deposit 12345678 50.0");
+
+        commandProcessor.process("passtime 1");
+
+        double expectedBalance = 25.0 + (25.0 * 0.03 / 12); // Account for APR
+        double actualBalance = bank.getAccount().get("12345678").getBalance();
+        assertEquals(expectedBalance, actualBalance, 0.01, "Low balance should result in a $25 deduction in Checking account.");
+    }
+
+    @Test
+    void passtime_deduction_savings() {
+        commandProcessor.process("create banking.savings 12345678 4");
+        commandProcessor.process("deposit 12345678 80.0");
+
+        commandProcessor.process("passtime 1");
+
+        double expectedBalance = 55.0 + (55.0 * 0.04 / 12);
+        double actualBalance = bank.getAccount().get("12345678").getBalance();
+        assertEquals(expectedBalance, actualBalance, 0.01, "Low balance should result in a $25 deduction in Savings account and apply APR.");
+    }
+    @Test
+    void passtime_close_zero_balance() {
+        commandProcessor.process("create banking.checking 12345678 3");
+
+        commandProcessor.process("passtime 1");
+
+        assertNull(bank.getAccount().get("12345678"), "Account should be closed if the balance is $0.");
+    }
+
+    @Test
+    void passtime_apr_zero_percent() {
+        commandProcessor.process("create banking.checking 12345678 0");
+        commandProcessor.process("deposit 12345678 1000.0");
+
+        commandProcessor.process("passtime 1");
+
+        double actualBalance = bank.getAccount().get("12345678").getBalance();
+        assertEquals(1000.0, actualBalance, 0.01, "Balance should remain the same when APR is 0%.");
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 

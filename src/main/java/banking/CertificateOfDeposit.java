@@ -3,13 +3,14 @@ package banking;
 import java.time.LocalDate;
 
 public class CertificateOfDeposit extends Accounts {
-    private static final double MINIMUM_BALANCE = 1000.0;
     private static final int LOCK_PERIOD_MONTHS = 12;
     private LocalDate startDate;
+    private LocalDate currentDate; // To simulate the passage of time
 
     public CertificateOfDeposit(double balance, double apr, String id) {
         super(balance, apr, id);
-        this.startDate = LocalDate.now();
+        this.startDate = LocalDate.now(); // Set start date as current date
+        this.currentDate = LocalDate.now(); // Initialize simulated current date
     }
 
     @Override
@@ -17,14 +18,26 @@ public class CertificateOfDeposit extends Accounts {
         return "certificateofdeposit";
     }
 
-
-    private boolean canWithdraw() {
-        return startDate.plusMonths(LOCK_PERIOD_MONTHS).isBefore(LocalDate.now());
+    // Method to simulate passing of time
+    public void passTime(int months) {
+        currentDate = currentDate.plusMonths(months);
     }
 
-
-    public boolean isWithdrawalAllowed() {
-        return getBalance() >= MINIMUM_BALANCE;  // Checks the balance for withdrawal eligibility
+    public boolean canWithdraw() {
+        LocalDate lockEndDate = startDate.plusMonths(LOCK_PERIOD_MONTHS);
+        return !currentDate.isBefore(lockEndDate); // Withdraw is allowed after lock period ends
     }
 
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getCurrentDate() {
+        return currentDate;
+    }
+
+    // Optional: Method to get lock end date for testing purposes
+    public LocalDate getLockEndDate() {
+        return startDate.plusMonths(LOCK_PERIOD_MONTHS);
+    }
 }

@@ -47,6 +47,10 @@ public abstract class Accounts {
         }
     }
 
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
     public abstract String getAccountType();
 
     public void resetMonthlyWithdrawalLimit() {
