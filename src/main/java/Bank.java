@@ -27,4 +27,8 @@ public class Bank {
     public void withdraw(String id, double amount) {
         getAccount().get(id).withdraw(amount);
     }
+
+    public boolean accountExists(String accountId) {
+        return accounts.containsKey(accountId);
+    }
 }
