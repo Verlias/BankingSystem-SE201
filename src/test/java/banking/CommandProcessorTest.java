@@ -239,6 +239,100 @@ public class CommandProcessorTest {
         assertEquals(0.0, actual, 0.01, "Balance should remain the same after attempting to withdraw from an empty account.");
     }
 
+    @Test
+    void passtime_no_effect_if_limits_not_reached() {
+        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("deposit 12345678 500.0");
+        commandProcessor.process("passtime");
+
+        double actual = bank.getAccount().get("12345678").getBalance();
+        assertEquals(500.0, actual, 0.01);
+    }
+
+    @Test
+    void passtime_resets_savings_withdrawal_limit() {
+        commandProcessor.process("create banking.Savings 12345678 3.5");
+        commandProcessor.process("deposit 12345678 1000.0");
+        commandProcessor.process("withdraw 12345678 500.0");
+        commandProcessor.process("passtime");
+        commandProcessor.process("withdraw 12345678 500.0");
+
+        double actual = bank.getAccount().get("12345678").getBalance();
+        assertEquals(500.0, actual, 0.01);
+    }
+
+    @Test
+    void passtime_cd_account_withdrawal_allowed_after_12_months() {
+        commandProcessor.process("create CD 12345678 5.0");
+        commandProcessor.process("deposit 12345678 1000.0");
+        commandProcessor.process("passtime");
+        commandProcessor.process("withdraw 12345678 1000.0");
+
+        double actual = bank.getAccount().get("12345678").getBalance();
+        assertEquals(0.0, actual, 0.01);
+    }
+
+    @Test
+    void passtime_cd_account_withdrawal_not_allowed_before_12_months() {
+        commandProcessor.process("create CD 12345678 5.0");
+        commandProcessor.process("deposit 12345678 1000.0");
+        commandProcessor.process("withdraw 12345678 500.0");
+        commandProcessor.process("passtime");
+        commandProcessor.process("withdraw 12345678 500.0");
+
+        double actual = bank.getAccount().get("12345678").getBalance();
+        assertEquals(1000.0, actual, 0.01);
+    }
+
+    @Test
+    void passtime_no_change_on_empty_account() {
+        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("passtime");
+
+        double actual = bank.getAccount().get("12345678").getBalance();
+        assertEquals(0.0, actual, 0.01);
+    }
+
+    @Test
+    void passtime_resets_monthly_withdrawal_count_on_savings() {
+        commandProcessor.process("create banking.Savings 12345678 3.5");
+        commandProcessor.process("deposit 12345678 1000.0");
+        commandProcessor.process("withdraw 12345678 200.0");
+        commandProcessor.process("passtime");
+        commandProcessor.process("withdraw 12345678 500.0");
+
+        double actual = bank.getAccount().get("12345678").getBalance();
+        assertEquals(300.0, actual, 0.01);
+    }
+
+    @Test
+    void passtime_multiple_accounts() {
+        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create banking.Savings 23456789 1.2");
+        commandProcessor.process("deposit 12345678 500.0");
+        commandProcessor.process("deposit 23456789 1000.0");
+        commandProcessor.process("passtime");
+
+        double checkingBalance = bank.getAccount().get("12345678").getBalance();
+        double savingsBalance = bank.getAccount().get("23456789").getBalance();
+
+        assertEquals(500.0, checkingBalance, 0.01);
+        assertEquals(1000.0, savingsBalance, 0.01);
+    }
+
+    @Test
+    void passtime_does_not_process_pending_withdrawals() {
+        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("deposit 12345678 500.0");
+        commandProcessor.process("withdraw 12345678 600.0");
+        commandProcessor.process("passtime");
+
+        double actual = bank.getAccount().get("12345678").getBalance();
+        assertEquals(500.0, actual, 0.01);
+    }
+
+
+
 
 
 
