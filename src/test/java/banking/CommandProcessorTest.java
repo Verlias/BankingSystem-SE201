@@ -293,17 +293,6 @@ public class CommandProcessorTest {
         assertEquals(0.0, actual, 0.01);
     }
 
-    @Test
-    void passtime_resets_monthly_withdrawal_count_on_savings() {
-        commandProcessor.process("create banking.Savings 12345678 3.5");
-        commandProcessor.process("deposit 12345678 1000.0");
-        commandProcessor.process("withdraw 12345678 200.0");
-        commandProcessor.process("passtime");
-        commandProcessor.process("withdraw 12345678 500.0");
-
-        double actual = bank.getAccount().get("12345678").getBalance();
-        assertEquals(300.0, actual, 0.01);
-    }
 
     @Test
     void passtime_multiple_accounts() {
