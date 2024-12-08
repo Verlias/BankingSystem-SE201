@@ -8,6 +8,9 @@ public class CommandValidator {
     }
 
     public boolean validate(String command) {
+        // Trim any leading or trailing spaces before processing
+        command = command.trim();
+
         if (command.startsWith("create")) {
             CreateCommandValidator createValidator = new CreateCommandValidator(bank);
             return createValidator.validate(command);
@@ -17,7 +20,13 @@ public class CommandValidator {
         } else if (command.startsWith("withdraw")) {
             WithdrawCommandValidator withdrawValidator = new WithdrawCommandValidator(bank);
             return withdrawValidator.validate(command);
+        } else if (command.startsWith("passtime")) {
+            PassTimeCommandValidator passTimeValidator = new PassTimeCommandValidator();
+            return passTimeValidator.validate(command);
         }
-        return false;  // Invalid command
+
+        // If command doesn't match any known prefix
+        System.out.println("Unknown command: " + command);
+        return false;
     }
 }
