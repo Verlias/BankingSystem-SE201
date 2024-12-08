@@ -1,12 +1,15 @@
 package banking;
+import java.time.LocalDate;
 
 public class Savings extends Accounts {
     private int monthlyWithdrawals;
     private static final int MONTHLY_LIMIT = 3;
+    private LocalDate lastWithdrawalDate;  // To store the date of the last withdrawal
 
     public Savings(double apr, String id) {
         super(0.0, apr, id);
         this.monthlyWithdrawals = 0;
+        this.lastWithdrawalDate = null;  // No withdrawal made yet
     }
 
     @Override
@@ -34,19 +37,20 @@ public class Savings extends Accounts {
         }
         super.withdraw(amount);
         incrementMonthlyWithdrawals();
+        lastWithdrawalDate = LocalDate.now();  // Set the last withdrawal date
     }
 
-    public boolean canWithdraw(double amount) {
-        if (hasExceededMonthlyWithdrawalLimit()) {
-            System.out.println("Cannot withdraw: Monthly withdrawal limit reached.");
-            return false;
-        }
+    // Add this method to retrieve the last withdrawal date
+    public LocalDate getLastWithdrawalDate() {
+        return lastWithdrawalDate;
+    }
 
-        if (getBalance() < amount) {
-            System.out.println("Cannot withdraw: Insufficient funds.");
-            return false;
-        }
+    // Optional: Reset the last withdrawal date
+    public void resetLastWithdrawalDate() {
+        lastWithdrawalDate = null;
+    }
 
-        return true;
+    public void setLastWithdrawalDate(LocalDate lastWithdrawalDate) {
+        this.lastWithdrawalDate = lastWithdrawalDate;
     }
 }

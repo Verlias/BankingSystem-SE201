@@ -14,7 +14,10 @@ public class CommandValidator {
         } else if (command.startsWith("deposit")) {
             DepositCommandValidator depositValidator = new DepositCommandValidator(bank);
             return depositValidator.validate(command);
+        } else if (command.startsWith("withdraw")) {
+            WithdrawCommandValidator withdrawValidator = new WithdrawCommandValidator(bank);
+            return withdrawValidator.validate(command);
         }
-        return false;
+        return false;  // Invalid command
     }
 }

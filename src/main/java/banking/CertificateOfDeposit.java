@@ -1,6 +1,9 @@
 package banking;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+
 
 public class CertificateOfDeposit extends Accounts {
     private static final int LOCK_PERIOD_MONTHS = 12;
@@ -35,6 +38,12 @@ public class CertificateOfDeposit extends Accounts {
     public LocalDate getCurrentDate() {
         return currentDate;
     }
+
+    // Getter for creation date
+    public Date getCreationDate() {
+        return Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
 
     // Optional: Method to get lock end date for testing purposes
     public LocalDate getLockEndDate() {
