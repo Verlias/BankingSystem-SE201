@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 //TT
 public class CommandProcessorTest {
 
@@ -160,14 +162,89 @@ public class CommandProcessorTest {
 
     @Test
     void withdraw_from_checking_account() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");  // Creating account
-        commandProcessor.process("deposit 12345678 500.0");  // Depositing $500
-        commandProcessor.process("withdraw 12345678 200.0");  // Withdrawing $200
+        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("deposit 12345678 500.0");
+        commandProcessor.process("withdraw 12345678 200.0");
 
-        double actual = bank.getAccount().get("12345678").getBalance();  // Getting balance after withdrawal
+        double actual = bank.getAccount().get("12345678").getBalance();
 
         assertEquals(300.0, actual, 0.01, "Balance should be correctly updated after withdrawing $200 from a checking account.");
     }
+
+    @Test
+    void withdraw_more_than_balance() {
+        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("deposit 12345678 500.0");
+        commandProcessor.process("withdraw 12345678 600.0");
+
+        double actual = bank.getAccount().get("12345678").getBalance();
+        assertEquals(500.0, actual, 0.01, "Balance should remain the same after trying to withdraw more than balance.");
+    }
+
+    @Test
+    void withdraw_more_than_checking_limit() {
+        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("deposit 12345678 500.0");
+        commandProcessor.process("withdraw 12345678 500.0");
+
+        double actual = bank.getAccount().get("12345678").getBalance();
+        assertEquals(500.0, actual, 0.01, "Balance should remain the same after exceeding the withdrawal limit for checking.");
+    }
+
+    @Test
+    void withdraw_negative_amount() {
+        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("deposit 12345678 500.0");
+        commandProcessor.process("withdraw 12345678 -100.0");
+
+        double actual = bank.getAccount().get("12345678").getBalance();
+        assertEquals(500.0, actual, 0.01, "Balance should remain the same after trying to withdraw a negative amount.");
+    }
+
+    @Test
+    void withdraw_from_non_existent_account() {
+        commandProcessor.process("withdraw 99999999 100.0");
+
+        // Check that no accounts are affected
+        assertTrue(bank.getAccount().isEmpty(), "No accounts should exist for non-existent account withdrawal.");
+    }
+
+    @Test
+    void withdraw_from_cd_account_before_12_months() {
+        commandProcessor.process("create CD 12345678 5.0");
+        commandProcessor.process("deposit 12345678 1000.0");
+        commandProcessor.process("withdraw 12345678 500.0");
+
+        double actual = bank.getAccount().get("12345678").getBalance();
+        assertEquals(1000.0, actual, 0.01, "Balance should remain the same after attempting to withdraw from a CD account before 12 months.");
+    }
+
+    @Test
+    void withdraw_full_balance_from_cd_account() {
+        commandProcessor.process("create CD 12345678 5.0");
+        commandProcessor.process("deposit 12345678 1000.0");
+        // Assuming the 12-month condition is fulfilled
+        commandProcessor.process("withdraw 12345678 1000.0");
+
+        double actual = bank.getAccount().get("12345678").getBalance();
+        assertEquals(0.0, actual, 0.01, "Balance should be zero after withdrawing the full balance from a CD account.");
+    }
+
+    @Test
+    void withdraw_from_empty_account() {
+        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("withdraw 12345678 100.0");
+
+        double actual = bank.getAccount().get("12345678").getBalance();
+        assertEquals(0.0, actual, 0.01, "Balance should remain the same after attempting to withdraw from an empty account.");
+    }
+
+
+
+
+
+
+
 
 
 
