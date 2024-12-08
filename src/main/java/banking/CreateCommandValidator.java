@@ -1,15 +1,13 @@
-public class CommandValidator {
+package banking;
+
+public class CreateCommandValidator {
     private final Bank bank;
 
-    public CommandValidator(Bank bank) {
+    public CreateCommandValidator(Bank bank) {
         this.bank = bank;
     }
 
     public boolean validate(String command) {
-        if (!command.startsWith("create")) {
-            return false;
-        }
-
         String[] parts = command.trim().split("\\s+");
 
         if (parts.length != 4) {
@@ -20,7 +18,7 @@ public class CommandValidator {
         String accountId = parts[2].trim();
         String aprString = parts[3].trim();
 
-        if (!accountType.equals("cd") && !accountType.equals("checking") && !accountType.equals("saving")) {
+        if (!accountType.equals("banking.cd") && !accountType.equals("banking.checking") && !accountType.equals("banking.saving")) {
             return false;
         }
 

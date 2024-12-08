@@ -1,21 +1,22 @@
+package banking;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SavingsTest {
+public class CheckingTest {
 
     public static final String ACCOUNT_ID_1 = "89456185";
-
-    Accounts savings;
+    Accounts checking;
     @BeforeEach
     void setUp() {
-        savings = new Savings(10, ACCOUNT_ID_1);
+        checking = new Checking(0.3, ACCOUNT_ID_1);
     }
 
     @Test
-    void savings_starts_with_zero_balance() {
-        double actual = savings.getBalance();
+    void checking_starts_with_zero_balance() {
+        double actual = checking.getBalance();
         assertEquals(0, actual);
     }
 }

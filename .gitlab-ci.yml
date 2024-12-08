@@ -23,8 +23,6 @@ build:
       - .gradle
 
 code_quality:
-  tags:
-    - saas-linux-medium-amd64
   stage: test
   allow_failure: false
   variables:
@@ -46,14 +44,23 @@ test:
       junit: build/test-results/test/**/TEST-*.xml
 
 code_quality_html:
-  tags:
-    - saas-linux-medium-amd64
   extends: code_quality
   variables:
     REPORT_FORMAT: html
   artifacts:
     expose_as: 'Code Quality Report HTML'
     paths: [ gl-code-quality-report.html ]
+
+mutation-coverage:
+  stage: test
+  script:
+    - 'gradle test pitest'
+    - 'tar -czvf build/reports/pitest.tar.gz build/reports/pitest/'
+  artifacts:
+    when: always
+    expose_as: 'Pitest Report'
+    paths:
+      - build/reports/pitest.tar.gz
 
 coverage-jdk11:
   stage: deploy

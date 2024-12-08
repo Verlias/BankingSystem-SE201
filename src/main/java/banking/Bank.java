@@ -1,3 +1,5 @@
+package banking;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,5 +32,13 @@ public class Bank {
 
     public boolean accountExists(String accountId) {
         return accounts.containsKey(accountId);
+    }
+
+    public String getAccountType(String accountId) {
+        if (accountExists(accountId)) {
+            return accounts.get(accountId).getAccountType();
+        } else {
+            return null;  // Return null if account doesn't exist
+        }
     }
 }
