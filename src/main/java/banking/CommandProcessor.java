@@ -28,7 +28,6 @@ public class CommandProcessor {
 
         switch (action) {
             case "create":
-                // Allow both 4 and 5 parts for create commands
                 if (parts.length != 4 && parts.length != 5) {
                     System.out.println("Invalid create command. Usage: create <accountType> <id> <apr> <initialBalance>");
                 } else {
@@ -54,6 +53,13 @@ public class CommandProcessor {
                     System.out.println("Invalid passtime command. Usage: passtime <months>");
                 } else {
                     processPassTime(parts);
+                }
+                break;
+            case "transfer":
+                if (parts.length != 4) {
+                    System.out.println("Invalid transfer command. Usage: transfer <fromAccountId> <toAccountId> <amount>");
+                } else {
+                    processTransfer(parts);
                 }
                 break;
             default:
@@ -332,6 +338,58 @@ public class CommandProcessor {
         account.withdraw(amount);
         System.out.println("Withdrew " + amount + " from account " + id);
     }
+
+    public void processTransfer(String[] parts) {
+        if (parts.length != 4) {
+            System.out.println("Invalid transfer command. Usage: transfer <fromId> <toId> <amount>");
+            return;
+        }
+
+        String fromId = parts[1];
+        String toId = parts[2];
+        double amount;
+
+        // Parse the amount
+        try {
+            amount = Double.parseDouble(parts[3]);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid transfer amount: " + parts[3]);
+            return;
+        }
+
+        // Check if the source and destination accounts exist
+        if (!bank.accountExists(fromId)) {
+            System.out.println("Account with ID " + fromId + " does not exist.");
+            return;
+        }
+
+        if (!bank.accountExists(toId)) {
+            System.out.println("Account with ID " + toId + " does not exist.");
+            return;
+        }
+
+        Accounts fromAccount = bank.getAccount().get(fromId);
+        Accounts toAccount = bank.getAccount().get(toId);
+
+        // Ensure that CD accounts are not part of the transfer
+        if (fromAccount instanceof CertificateOfDeposit || toAccount instanceof CertificateOfDeposit) {
+            System.out.println("Error: CD accounts cannot be part of a transfer.");
+            return;
+        }
+
+        // Check if the source account has enough balance
+        if (fromAccount.getBalance() < amount) {
+            System.out.println("Insufficient balance in account " + fromId + " for the transfer.");
+            return;
+        }
+
+        // Perform the transfer: Deduct from the source account and add to the destination account
+        fromAccount.setBalance(fromAccount.getBalance() - amount);
+        toAccount.setBalance(toAccount.getBalance() + amount);
+
+        System.out.println("Transferred " + amount + " from account " + fromId + " to account " + toId);
+    }
+
 
 
 

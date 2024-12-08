@@ -35,4 +35,18 @@ public class Savings extends Accounts {
         super.withdraw(amount);
         incrementMonthlyWithdrawals();
     }
+
+    public boolean canWithdraw(double amount) {
+        if (hasExceededMonthlyWithdrawalLimit()) {
+            System.out.println("Cannot withdraw: Monthly withdrawal limit reached.");
+            return false;
+        }
+
+        if (getBalance() < amount) {
+            System.out.println("Cannot withdraw: Insufficient funds.");
+            return false;
+        }
+
+        return true;
+    }
 }

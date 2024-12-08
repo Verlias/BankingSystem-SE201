@@ -471,6 +471,106 @@ public class CommandProcessorTest {
         assertEquals(1000.0, actualBalance, 0.01, "Balance should remain the same when APR is 0%.");
     }
 
+    @Test
+    void transfer_valid_checking_to_checking() {
+        commandProcessor.process("create banking.checking 12345678 3");  // Create checking account 12345678 with 3% APR
+        commandProcessor.process("create banking.checking 98765432 3");  // Create checking account 98765432 with 3% APR
+        commandProcessor.process("deposit 12345678 500.0");  // Deposit 500.0 into checking account 12345678
+        commandProcessor.process("deposit 98765432 200.0");  // Deposit 200.0 into checking account 98765432
+
+        commandProcessor.process("transfer 12345678 98765432 200.0");  // Transfer 200 from account 12345678 to 98765432
+
+        double expectedBalanceFrom = 500.0 - 200.0;  // 12345678 balance should be 300.0
+        double expectedBalanceTo = 200.0 + 200.0;    // 98765432 balance should be 400.0
+        double actualBalanceFrom = bank.getAccount().get("12345678").getBalance();
+        double actualBalanceTo = bank.getAccount().get("98765432").getBalance();
+
+        assertEquals(expectedBalanceFrom, actualBalanceFrom, 0.01, "Source checking account balance should decrease correctly.");
+        assertEquals(expectedBalanceTo, actualBalanceTo, 0.01, "Destination checking account balance should increase correctly.");
+    }
+
+    @Test
+    void transfer_checking_to_savings() {
+        commandProcessor.process("create banking.checking 12345678 3");  // Create checking account 12345678 with 3% APR
+        commandProcessor.process("create banking.savings 98765432 4");   // Create savings account 98765432 with 4% APR
+        commandProcessor.process("deposit 12345678 500.0");  // Deposit 500.0 into checking account 12345678
+        commandProcessor.process("deposit 98765432 100.0");  // Deposit 100.0 into savings account 98765432
+
+        commandProcessor.process("transfer 12345678 98765432 300.0");  // Transfer 300 from checking to savings
+
+        double expectedBalanceFrom = 500.0 - 300.0;  // 12345678 balance should be 200.0
+        double expectedBalanceTo = 100.0 + 300.0;    // 98765432 balance should be 400.0
+        double actualBalanceFrom = bank.getAccount().get("12345678").getBalance();
+        double actualBalanceTo = bank.getAccount().get("98765432").getBalance();
+
+        assertEquals(expectedBalanceFrom, actualBalanceFrom, 0.01, "Source checking account balance should decrease correctly.");
+        assertEquals(expectedBalanceTo, actualBalanceTo, 0.01, "Destination savings account balance should increase correctly.");
+    }
+
+    @Test
+    void transfer_savings_to_checking() {
+        commandProcessor.process("create banking.savings 12345678 4");   // Create savings account 12345678 with 4% APR
+        commandProcessor.process("create banking.checking 98765432 3");  // Create checking account 98765432 with 3% APR
+        commandProcessor.process("deposit 12345678 500.0");  // Deposit 500.0 into savings account 12345678
+        commandProcessor.process("deposit 98765432 50.0");   // Deposit 50.0 into checking account 98765432
+
+        commandProcessor.process("transfer 12345678 98765432 200.0");  // Transfer 200 from savings to checking
+
+        double expectedBalanceFrom = 500.0 - 200.0;  // 12345678 balance should be 300.0
+        double expectedBalanceTo = 50.0 + 200.0;    // 98765432 balance should be 250.0
+        double actualBalanceFrom = bank.getAccount().get("12345678").getBalance();
+        double actualBalanceTo = bank.getAccount().get("98765432").getBalance();
+
+        assertEquals(expectedBalanceFrom, actualBalanceFrom, 0.01, "Source savings account balance should decrease correctly.");
+        assertEquals(expectedBalanceTo, actualBalanceTo, 0.01, "Destination checking account balance should increase correctly.");
+    }
+
+    @Test
+    void transfer_insufficient_funds() {
+        commandProcessor.process("create banking.checking 12345678 3");
+        commandProcessor.process("create banking.savings 98765432 4");
+
+        commandProcessor.process("deposit 12345678 100.0");
+        commandProcessor.process("deposit 98765432 50.0");
+
+        commandProcessor.process("transfer 12345678 98765432 200.0");
+
+        double expectedBalanceFrom = 100.0;
+        double expectedBalanceTo = 50.0;
+
+        double actualBalanceFrom = bank.getAccount().get("12345678").getBalance();
+        double actualBalanceTo = bank.getAccount().get("98765432").getBalance();
+
+        assertEquals(expectedBalanceFrom, actualBalanceFrom, 0.01, "Source account balance should remain the same.");
+        assertEquals(expectedBalanceTo, actualBalanceTo, 0.01, "Destination account balance should remain the same.");
+    }
+
+
+    @Test
+    void transfer_savings_to_savings() {
+        commandProcessor.process("create banking.savings 12345678 3");   // Create savings account 12345678 with 3% APR
+        commandProcessor.process("create banking.savings 98765432 4");   // Create savings account 98765432 with 4% APR
+        commandProcessor.process("deposit 12345678 1000.0");  // Deposit 1000.0 into savings account 12345678
+        commandProcessor.process("deposit 98765432 200.0");  // Deposit 200.0 into savings account 98765432
+
+        commandProcessor.process("transfer 12345678 98765432 500.0");  // Transfer 500 from one savings account to another
+
+        double expectedBalanceFrom = 1000.0 - 500.0;  // 12345678 balance should be 500.0
+        double expectedBalanceTo = 200.0 + 500.0;    // 98765432 balance should be 700.0
+        double actualBalanceFrom = bank.getAccount().get("12345678").getBalance();
+        double actualBalanceTo = bank.getAccount().get("98765432").getBalance();
+
+        assertEquals(expectedBalanceFrom, actualBalanceFrom, 0.01, "Source savings account balance should decrease correctly.");
+        assertEquals(expectedBalanceTo, actualBalanceTo, 0.01, "Destination savings account balance should increase correctly.");
+    }
+
+
+
+
+
+
+
+
 
 
 
