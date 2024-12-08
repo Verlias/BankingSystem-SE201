@@ -58,11 +58,18 @@ public class TransferCommandValidator {
         }
 
         // Check if the source account has enough balance for the transfer
-        if (fromAccount.getBalance() < amount) {
-            System.out.println("Insufficient balance in account " + fromId + " for the transfer.");
-            return false;
+        double availableBalance = fromAccount.getBalance();
+        if (availableBalance < amount) {
+            System.out.println("Insufficient balance in account " + fromId + " for the transfer. Only " + availableBalance + " will be transferred.");
+            amount = availableBalance;  // Transfer the available balance instead of the requested amount
         }
 
-        return true; // All validations passed
+        // Perform the transfer logic: withdraw from the source and deposit into the destination
+        fromAccount.withdraw(amount);
+        toAccount.addDeposit(amount);
+
+        // Inform the user of the successful transfer
+        System.out.println("Transferred " + amount + " from account " + fromId + " to account " + toId);
+        return true;  // All validations passed and transaction completed successfully
     }
 }
