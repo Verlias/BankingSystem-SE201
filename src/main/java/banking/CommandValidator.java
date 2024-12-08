@@ -23,6 +23,9 @@ public class CommandValidator {
         } else if (command.startsWith("passtime")) {
             PassTimeCommandValidator passTimeValidator = new PassTimeCommandValidator();
             return passTimeValidator.validate(command);
+        } else if (command.startsWith("transfer")) {
+            TransferCommandValidator transferValidator = new TransferCommandValidator(bank);
+            return transferValidator.validate(command);
         }
 
         // If command doesn't match any known prefix
