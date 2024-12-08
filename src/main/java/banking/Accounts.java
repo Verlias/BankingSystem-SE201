@@ -4,7 +4,6 @@ public abstract class Accounts {
 
     private double apr;
     private double balance;
-
     private final String id;
 
     public Accounts(double balance, double apr, String id) {
@@ -28,6 +27,7 @@ public abstract class Accounts {
     public void withdraw(double amount) {
         balance -= amount;
 
+        // Ensure balance doesn't go below 0
         if (balance < 0) {
             balance = 0;
         }
@@ -36,7 +36,6 @@ public abstract class Accounts {
     public String getId() {
         return id;
     }
-
 
     public void setApr(double apr) {
         if (apr < 0.0) {
@@ -50,5 +49,7 @@ public abstract class Accounts {
 
     public abstract String getAccountType();
 
+    public void resetMonthlyWithdrawalLimit() {
 
+    }
 }

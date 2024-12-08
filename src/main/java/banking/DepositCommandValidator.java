@@ -44,21 +44,21 @@ public class DepositCommandValidator {
         String accountType = bank.getAccountType(accountId);
 
         switch (accountType.toLowerCase()) {
-            case "banking.saving":
+            case "savings":
                 if (amount > 2500 || amount == 0) {
                     System.out.println("Deposit amount exceeds the $2500 limit for savings accounts.");
                     return false;
                 }
                 break;
 
-            case "banking.checking":
+            case "checking":
                 if (amount > 1000 || amount == 0) {
                     System.out.println("Deposit amount exceeds the $1000 limit for checking accounts.");
                     return false;
                 }
                 break;
 
-            case "banking.cd":
+            case "certificateofdeposit":
                 System.out.println("Deposits are not allowed for Certificate of Deposit (CD) accounts.");
                 return false;
 

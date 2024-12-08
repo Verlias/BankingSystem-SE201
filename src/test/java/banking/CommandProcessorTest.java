@@ -108,7 +108,7 @@ public class CommandProcessorTest {
 
     @Test
     void deposit_to_checking_account_exceeds_limit() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create banking.checking 12345678 3.5");
         commandProcessor.process("deposit 12345678 1500.0");
         double actual = bank.getAccount().get("12345678").getBalance();
         assertEquals(0.0, actual, 0.01, "Deposit exceeding $1000 should not be allowed for checking account");
@@ -116,7 +116,7 @@ public class CommandProcessorTest {
 
     @Test
     void deposit_to_savings_account_within_limit() {
-        commandProcessor.process("create banking.Savings 87654321 2.5");
+        commandProcessor.process("create banking.savings 87654321 2.5");
         commandProcessor.process("deposit 87654321 2500.0");
         double actual = bank.getAccount().get("87654321").getBalance();
         assertEquals(2500.0, actual, 0.01, "Balance after maximum allowed deposit to savings account should be 2500.0");
@@ -124,7 +124,7 @@ public class CommandProcessorTest {
 
     @Test
     void deposit_to_savings_account_exceeds_limit() {
-        commandProcessor.process("create banking.Savings 87654321 2.5");
+        commandProcessor.process("create banking.savings 87654321 2.5");
         commandProcessor.process("deposit 87654321 3000.0");
         double actual = bank.getAccount().get("87654321").getBalance();
         assertEquals(0.0, actual, 0.01, "Deposit exceeding $2500 should not be allowed for savings account");
@@ -157,6 +157,19 @@ public class CommandProcessorTest {
         double actual = bank.getAccount().get("87654321").getBalance();
         assertEquals(2500.0, actual, 0.01, "Balance should remain 2500.0 as withdrawal exceeds balance");
     }
+
+    @Test
+    void withdraw_from_checking_account() {
+        commandProcessor.process("create banking.Checking 12345678 3.5");  // Creating account
+        commandProcessor.process("deposit 12345678 500.0");  // Depositing $500
+        commandProcessor.process("withdraw 12345678 200.0");  // Withdrawing $200
+
+        double actual = bank.getAccount().get("12345678").getBalance();  // Getting balance after withdrawal
+
+        assertEquals(300.0, actual, 0.01, "Balance should be correctly updated after withdrawing $200 from a checking account.");
+    }
+
+
 
 
 
