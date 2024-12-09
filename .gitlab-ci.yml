@@ -1,7 +1,7 @@
 include:
   - template: Code-Quality.gitlab-ci.yml
 
-image: gradle:6.6.1-jdk11
+image: gradle:6.6.1-jdk17
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
