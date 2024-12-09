@@ -66,17 +66,15 @@ public class CommandProcessor {
     }
 
     private Accounts createAccount(String accountType, String id, double apr, String[] parts) {
-        switch (accountType) {
-            case "checking":
-                return new Checking(apr, id);
-            case "savings":
-                return new Savings(apr, id);
-            case "cd":
-                return createCdAccount(parts, apr, id);
-            default:
+        return switch (accountType) {
+            case "checking" -> new Checking(apr, id);
+            case "savings" -> new Savings(apr, id);
+            case "cd" -> createCdAccount(parts, apr, id);
+            default -> {
                 System.out.println("Invalid account type: " + accountType);
-                return null;
-        }
+                yield null;
+            }
+        };
     }
 
     private Accounts createCdAccount(String[] parts, double apr, String id) {
@@ -220,7 +218,7 @@ public class CommandProcessor {
     }
 
     private void processPassTime(String[] parts) {
-        int monthsToPass = parseInt(parts[1], "months to pass", 1, 60);
+        int monthsToPass = parseInt(parts[1]);
         if (monthsToPass == -1) return;
 
         currentDate = currentDate.plusMonths(monthsToPass);
@@ -258,8 +256,7 @@ public class CommandProcessor {
 
         if (account instanceof Savings || account instanceof Checking) {
             applyAPR(account, monthsToPass);
-        } else if (account instanceof CertificateOfDeposit) {
-            CertificateOfDeposit cdAccount = (CertificateOfDeposit) account;
+        } else if (account instanceof CertificateOfDeposit cdAccount) {
             cdAccount.passTime(monthsToPass);
             applyAPR(cdAccount, monthsToPass);
         }
@@ -295,16 +292,16 @@ public class CommandProcessor {
         }
     }
 
-    private int parseInt(String value, String fieldName, int minValue, int maxValue) {
+    private int parseInt(String value) {
         try {
             int parsedValue = Integer.parseInt(value);
-            if (parsedValue < minValue || parsedValue > maxValue) {
-                System.out.println(fieldName + " must be between " + minValue + " and " + maxValue + ".");
+            if (parsedValue < 1 || parsedValue > 60) {
+                System.out.println("months to pass" + " must be between " + 1 + " and " + 60 + ".");
                 return -1;
             }
             return parsedValue;
         } catch (NumberFormatException e) {
-            System.out.println("Invalid " + fieldName + ". Please enter a valid integer.");
+            System.out.println("Invalid " + "months to pass" + ". Please enter a valid integer.");
             return -1;
         }
     }
