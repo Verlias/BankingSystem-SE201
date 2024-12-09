@@ -18,7 +18,7 @@ public class CreateCommandValidator {
         String accountId = parts[2].trim();
         String aprString = parts[3].trim();
 
-        if (!accountType.equals("banking.cd") && !accountType.equals("banking.checking") && !accountType.equals("banking.saving")) {
+        if (!accountType.equals("cd") && !accountType.equals("checking") && !accountType.equals("saving")) {
             return false;
         }
 

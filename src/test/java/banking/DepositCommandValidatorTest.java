@@ -19,7 +19,7 @@ public class DepositCommandValidatorTest {
         createCommandValidator = new CreateCommandValidator(bank);
         depositCommandValidator = new DepositCommandValidator(bank);
         commandProcessor = new CommandProcessor(bank);
-        commandProcessor.process("create banking.Checking 89456185 3.5");
+        commandProcessor.process("create Checking 89456185 3.5");
     }
 
     @Test
@@ -75,21 +75,21 @@ public class DepositCommandValidatorTest {
 
     @Test
     void valid_deposit_for_savings_account() {
-        commandProcessor.process("create banking.Savings 12345679 2.5");  // Create a Savings account
+        commandProcessor.process("create Savings 12345679 2.5");  // Create a Savings account
         boolean actual = depositCommandValidator.validate("deposit 12345679 2000.0");
         assertTrue(actual, "Valid deposit for Savings account should pass validation");
     }
 
     @Test
     void deposit_exceeds_savings_limit() {
-        commandProcessor.process("create banking.Savings 12345679 2.5");  // Create a Savings account
+        commandProcessor.process("create Savings 12345679 2.5");  // Create a Savings account
         boolean actual = depositCommandValidator.validate("deposit 12345679 3000.0");
         assertFalse(actual, "Deposit amount exceeds limit for Savings account (max: $2500)");
     }
 
     @Test
     void deposit_not_allowed_for_cd_account() {
-        commandProcessor.process("create banking.cd 12345680 4.0");  // Create a CD account
+        commandProcessor.process("create cd 12345680 4.0");  // Create a CD account
         boolean actual = depositCommandValidator.validate("deposit 12345680 100.0");
         assertFalse(actual, "Deposits are not allowed for CD accounts");
     }

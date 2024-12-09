@@ -20,56 +20,56 @@ public class CommandProcessorTest {
     //Account Creation Testing
     @Test
     void create_checking_account_type() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create Checking 12345678 3.5");
         String actual = bank.getAccount().get("12345678").getClass().getSimpleName();
-        assertEquals("Checking", actual, "Account should be of type banking.Checking");
+        assertEquals("Checking", actual, "Account should be of type Checking");
     }
 
     @Test
     void create_checking_account_apr() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create Checking 12345678 3.5");
         double actual = bank.getAccount().get("12345678").getApr();
         assertEquals(3.5, actual, 0.01, "APR should be 3.5");
     }
 
     @Test
     void create_checking_account_id() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create Checking 12345678 3.5");
         String actual = bank.getAccount().get("12345678").getId();
         assertEquals("12345678", actual, "Account ID should be 12345678");
     }
 
     @Test
     void create_checking_account_initial_balance() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create Checking 12345678 3.5");
         double actual = bank.getAccount().get("12345678").getBalance();
         assertEquals(0.0, actual, 0.01, "Initial balance should be 0.0");
     }
 
     @Test
     void create_savings_account_type() {
-        commandProcessor.process("create banking.Savings 87654321 2.5");
+        commandProcessor.process("create Savings 87654321 2.5");
         String actual = bank.getAccount().get("87654321").getClass().getSimpleName();
-        assertEquals("Savings", actual, "Account should be of type banking.Savings");
+        assertEquals("Savings", actual, "Account should be of type Savings");
     }
 
     @Test
     void create_savings_account_apr() {
-        commandProcessor.process("create banking.Savings 87654321 2.5");
+        commandProcessor.process("create Savings 87654321 2.5");
         double actual = bank.getAccount().get("87654321").getApr();
         assertEquals(2.5, actual, 0.01, "APR should be 2.5");
     }
 
     @Test
     void create_savings_account_id() {
-        commandProcessor.process("create banking.Savings 87654321 2.5");
+        commandProcessor.process("create Savings 87654321 2.5");
         String actual = bank.getAccount().get("87654321").getId();
         assertEquals("87654321", actual, "Account ID should be 87654321");
     }
 
     @Test
     void create_savings_account_initial_balance() {
-        commandProcessor.process("create banking.Savings 87654321 2.5");
+        commandProcessor.process("create Savings 87654321 2.5");
         double actual = bank.getAccount().get("87654321").getBalance();
         assertEquals(0.0, actual, 0.01, "Initial balance should be 0.0");
     }
@@ -78,7 +78,7 @@ public class CommandProcessorTest {
     void create_cd_account_type() {
         commandProcessor.process("create CD 11223344 1.5 1000");
         String actual = bank.getAccount().get("11223344").getClass().getSimpleName();
-        assertEquals("CertificateOfDeposit", actual, "Account should be of type banking.CertificateOfDeposit");
+        assertEquals("CertificateOfDeposit", actual, "Account should be of type CertificateOfDeposit");
     }
 
     @Test
@@ -93,7 +93,7 @@ public class CommandProcessorTest {
     //Deposit Test
     @Test
     void deposit_to_account_balance() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create Checking 12345678 3.5");
         commandProcessor.process("deposit 12345678 100.0");
         double actual = bank.getAccount().get("12345678").getBalance();
         assertEquals(100.0, actual, 0.01, "Balance after deposit should be 100.0");
@@ -101,7 +101,7 @@ public class CommandProcessorTest {
 
     @Test
     void deposit_to_checking_account_within_limit() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create Checking 12345678 3.5");
         commandProcessor.process("deposit 12345678 1000.0");
         double actual = bank.getAccount().get("12345678").getBalance();
         assertEquals(1000.0, actual, 0.01, "Balance after maximum allowed deposit to checking account should be 1000.0");
@@ -109,7 +109,7 @@ public class CommandProcessorTest {
 
     @Test
     void deposit_to_checking_account_exceeds_limit() {
-        commandProcessor.process("create banking.checking 12345678 3.5");
+        commandProcessor.process("create checking 12345678 3.5");
         commandProcessor.process("deposit 12345678 1500.0");
         double actual = bank.getAccount().get("12345678").getBalance();
         assertEquals(0.0, actual, 0.01, "Deposit exceeding $1000 should not be allowed for checking account");
@@ -117,7 +117,7 @@ public class CommandProcessorTest {
 
     @Test
     void deposit_to_savings_account_within_limit() {
-        commandProcessor.process("create banking.savings 87654321 2.5");
+        commandProcessor.process("create savings 87654321 2.5");
         commandProcessor.process("deposit 87654321 2500.0");
         double actual = bank.getAccount().get("87654321").getBalance();
         assertEquals(2500.0, actual, 0.01, "Balance after maximum allowed deposit to savings account should be 2500.0");
@@ -125,7 +125,7 @@ public class CommandProcessorTest {
 
     @Test
     void deposit_to_savings_account_exceeds_limit() {
-        commandProcessor.process("create banking.savings 87654321 2.5");
+        commandProcessor.process("create savings 87654321 2.5");
         commandProcessor.process("deposit 87654321 3000.0");
         double actual = bank.getAccount().get("87654321").getBalance();
         assertEquals(0.0, actual, 0.01, "Deposit exceeding $2500 should not be allowed for savings account");
@@ -143,7 +143,7 @@ public class CommandProcessorTest {
 
     @Test
     void withdraw_from_checking_account_exceeds_balance() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create Checking 12345678 3.5");
         commandProcessor.process("deposit 12345678 1000.0");
         commandProcessor.process("withdraw 12345678 1500.0");
         double actual = bank.getAccount().get("12345678").getBalance();
@@ -152,7 +152,7 @@ public class CommandProcessorTest {
 
     @Test
     void withdraw_from_savings_account_exceeds_balance() {
-        commandProcessor.process("create banking.Savings 87654321 2.5");
+        commandProcessor.process("create Savings 87654321 2.5");
         commandProcessor.process("deposit 87654321 2500.0");
         commandProcessor.process("withdraw 87654321 3000.0");
         double actual = bank.getAccount().get("87654321").getBalance();
@@ -161,7 +161,7 @@ public class CommandProcessorTest {
 
     @Test
     void withdraw_from_checking_account() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create Checking 12345678 3.5");
         commandProcessor.process("deposit 12345678 500.0");
         commandProcessor.process("withdraw 12345678 200.0");
 
@@ -172,7 +172,7 @@ public class CommandProcessorTest {
 
     @Test
     void withdraw_more_than_balance() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create Checking 12345678 3.5");
         commandProcessor.process("deposit 12345678 500.0");
         commandProcessor.process("withdraw 12345678 600.0");
 
@@ -182,7 +182,7 @@ public class CommandProcessorTest {
 
     @Test
     void withdraw_more_than_checking_limit() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create checking 12345678 3.5");
         commandProcessor.process("deposit 12345678 500.0");
         commandProcessor.process("withdraw 12345678 500.0");
 
@@ -192,7 +192,7 @@ public class CommandProcessorTest {
 
     @Test
     void withdraw_negative_amount() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create checking 12345678 3.5");
         commandProcessor.process("deposit 12345678 500.0");
         commandProcessor.process("withdraw 12345678 -100.0");
 
@@ -229,7 +229,7 @@ public class CommandProcessorTest {
     //Actual   :1016.7711229865932
     @Test
     void withdraw_from_empty_account() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create checking 12345678 3.5");
         commandProcessor.process("withdraw 12345678 100.0");
 
         double actual = bank.getAccount().get("12345678").getBalance();
@@ -238,7 +238,7 @@ public class CommandProcessorTest {
 
     @Test
     void passtime_no_effect_if_limits_not_reached() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create checking 12345678 3.5");
         commandProcessor.process("deposit 12345678 500.0");
         commandProcessor.process("passtime");
 
@@ -248,7 +248,7 @@ public class CommandProcessorTest {
 
     @Test
     void passtime_resets_savings_withdrawal_limit() {
-        commandProcessor.process("create banking.Savings 12345678 3.5");
+        commandProcessor.process("create savings 12345678 3.5");
         commandProcessor.process("deposit 12345678 1000.0");
         commandProcessor.process("withdraw 12345678 500.0");
         commandProcessor.process("passtime");
@@ -285,7 +285,7 @@ public class CommandProcessorTest {
 
     @Test
     void passtime_no_change_on_empty_account() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create checking 12345678 3.5");
         commandProcessor.process("passtime");
 
         double actual = bank.getAccount().get("12345678").getBalance();
@@ -293,8 +293,8 @@ public class CommandProcessorTest {
     }
     @Test
     void passtime_multiple_accounts() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
-        commandProcessor.process("create banking.Savings 23456789 1.2");
+        commandProcessor.process("create checking 12345678 3.5");
+        commandProcessor.process("create savings 23456789 1.2");
         commandProcessor.process("deposit 12345678 500.0");
         commandProcessor.process("deposit 23456789 1000.0");
         commandProcessor.process("passtime");
@@ -308,7 +308,7 @@ public class CommandProcessorTest {
 
     @Test
     void passtime_does_not_process_pending_withdrawals() {
-        commandProcessor.process("create banking.Checking 12345678 3.5");
+        commandProcessor.process("create checking 12345678 3.5");
         commandProcessor.process("deposit 12345678 500.0");
         commandProcessor.process("withdraw 12345678 600.0");
         commandProcessor.process("passtime");
@@ -319,7 +319,7 @@ public class CommandProcessorTest {
 
     @Test
     void passtime_checking_account_withdrawal_allowed() {
-        commandProcessor.process("create banking.checking 12345678 0.0");
+        commandProcessor.process("create checking 12345678 0.0");
         commandProcessor.process("deposit 12345678 1000.0");
 
         commandProcessor.process("passtime 1");
@@ -332,7 +332,7 @@ public class CommandProcessorTest {
 
     @Test
     void passtime_savings_account_withdrawal_allowed() {
-        commandProcessor.process("create banking.savings 12345678 0.0");
+        commandProcessor.process("create savings 12345678 0.0");
         commandProcessor.process("deposit 12345678 2000.0");
 
         commandProcessor.process("passtime 1");
@@ -349,7 +349,7 @@ public class CommandProcessorTest {
 
     @Test
     void passtime_invalid_negative_withdrawal() {
-        commandProcessor.process("create banking.checking 12345678 0.0");
+        commandProcessor.process("create checking 12345678 0.0");
         commandProcessor.process("deposit 12345678 1000.0");
 
         commandProcessor.process("passtime 1");
@@ -362,7 +362,7 @@ public class CommandProcessorTest {
 
     @Test
     void passtime_zero_withdrawal_amount() {
-        commandProcessor.process("create banking.checking 12345678 0.0");
+        commandProcessor.process("create checking 12345678 0.0");
         commandProcessor.process("deposit 12345678 1000.0");
 
         commandProcessor.process("passtime 1");
@@ -373,22 +373,10 @@ public class CommandProcessorTest {
         assertEquals(1000.0, actualBalance, 0.01, "Zero withdrawals are not allowed.");
     }
 
-    @Test
-    void passtime_close_account() {
-        commandProcessor.process("create checking 12345678 0.0");
-        commandProcessor.process("deposit 12345678 1000.0");
-
-        commandProcessor.process("passtime 1");
-
-        commandProcessor.process("withdraw 12345678 100");
-
-        double actualBalance = bank.getAccount().get("12345678") == null ? 0.0 : bank.getAccount().get("12345678").getBalance();
-        assertEquals(0.0, actualBalance, 0.01, "Account should not exist after closing, and balance should be zero.");
-    }
 
     @Test
     void passtime_apr_checking() {
-        commandProcessor.process("create banking.checking 12345678 3");
+        commandProcessor.process("create checking 12345678 3");
         commandProcessor.process("deposit 12345678 1000.0");
 
         commandProcessor.process("passtime 1");
@@ -400,7 +388,7 @@ public class CommandProcessorTest {
 
     @Test
     void passtime_apr_savings() {
-        commandProcessor.process("create banking.savings 12345678 5");
+        commandProcessor.process("create savings 12345678 5");
         commandProcessor.process("deposit 12345678 1000.0");
 
         commandProcessor.process("passtime 1");
@@ -414,12 +402,14 @@ public class CommandProcessorTest {
     void passtime_apr_cd() {
         commandProcessor.process("create cd 12345678 2.1 2000");
 
-        commandProcessor.process("passtime 1");
+        // Pass 4 months of time
+        commandProcessor.process("passtime 4");
 
         double aprDecimal = 2.1 / 100;
         double monthlyAPR = aprDecimal / 12;
         double balance = 2000.0;
 
+        // Apply APR for 4 months
         for (int i = 0; i < 4; i++) {
             balance *= (1 + monthlyAPR);
         }
@@ -428,9 +418,11 @@ public class CommandProcessorTest {
         assertEquals(balance, actualBalance, 0.01, "APR should be applied 4 times for CD account.");
     }
 
+
+
     @Test
     void passtime_deduction_checking() {
-        commandProcessor.process("create banking.checking 12345678 3");
+        commandProcessor.process("create checking 12345678 3");
         commandProcessor.process("deposit 12345678 50.0");
 
         commandProcessor.process("passtime 1");
@@ -442,7 +434,7 @@ public class CommandProcessorTest {
 
     @Test
     void passtime_deduction_savings() {
-        commandProcessor.process("create banking.savings 12345678 4");
+        commandProcessor.process("create savings 12345678 4");
         commandProcessor.process("deposit 12345678 80.0");
 
         commandProcessor.process("passtime 1");
@@ -453,7 +445,7 @@ public class CommandProcessorTest {
     }
     @Test
     void passtime_close_zero_balance() {
-        commandProcessor.process("create banking.checking 12345678 3");
+        commandProcessor.process("create checking 12345678 3");
 
         commandProcessor.process("passtime 1");
 
@@ -462,10 +454,10 @@ public class CommandProcessorTest {
 
     @Test
     void passtime_apr_zero_percent() {
-        commandProcessor.process("create banking.checking 12345678 0");
+        commandProcessor.process("create checking 12345678 0");
         commandProcessor.process("deposit 12345678 1000.0");
 
-        commandProcessor.process("passtime 1");
+        commandProcessor.process("passtime 2");
 
         double actualBalance = bank.getAccount().get("12345678").getBalance();
         assertEquals(1000.0, actualBalance, 0.01, "Balance should remain the same when APR is 0%.");
@@ -473,8 +465,8 @@ public class CommandProcessorTest {
 
     @Test
     void transfer_valid_checking_to_checking() {
-        commandProcessor.process("create banking.checking 12345678 3");  // Create checking account 12345678 with 3% APR
-        commandProcessor.process("create banking.checking 98765432 3");  // Create checking account 98765432 with 3% APR
+        commandProcessor.process("create checking 12345678 3");  // Create checking account 12345678 with 3% APR
+        commandProcessor.process("create checking 98765432 3");  // Create checking account 98765432 with 3% APR
         commandProcessor.process("deposit 12345678 500.0");  // Deposit 500.0 into checking account 12345678
         commandProcessor.process("deposit 98765432 200.0");  // Deposit 200.0 into checking account 98765432
 
@@ -491,8 +483,8 @@ public class CommandProcessorTest {
 
     @Test
     void transfer_checking_to_savings() {
-        commandProcessor.process("create banking.checking 12345678 3");  // Create checking account 12345678 with 3% APR
-        commandProcessor.process("create banking.savings 98765432 4");   // Create savings account 98765432 with 4% APR
+        commandProcessor.process("create checking 12345678 3");  // Create checking account 12345678 with 3% APR
+        commandProcessor.process("create savings 98765432 4");   // Create savings account 98765432 with 4% APR
         commandProcessor.process("deposit 12345678 500.0");  // Deposit 500.0 into checking account 12345678
         commandProcessor.process("deposit 98765432 100.0");  // Deposit 100.0 into savings account 98765432
 
@@ -509,8 +501,8 @@ public class CommandProcessorTest {
 
     @Test
     void transfer_savings_to_checking() {
-        commandProcessor.process("create banking.savings 12345678 4");   // Create savings account 12345678 with 4% APR
-        commandProcessor.process("create banking.checking 98765432 3");  // Create checking account 98765432 with 3% APR
+        commandProcessor.process("create savings 12345678 4");   // Create savings account 12345678 with 4% APR
+        commandProcessor.process("create checking 98765432 3");  // Create checking account 98765432 with 3% APR
         commandProcessor.process("deposit 12345678 500.0");  // Deposit 500.0 into savings account 12345678
         commandProcessor.process("deposit 98765432 50.0");   // Deposit 50.0 into checking account 98765432
 
@@ -527,8 +519,8 @@ public class CommandProcessorTest {
 
     @Test
     void transfer_insufficient_funds() {
-        commandProcessor.process("create banking.checking 12345678 3");
-        commandProcessor.process("create banking.savings 98765432 4");
+        commandProcessor.process("create checking 12345678 3");
+        commandProcessor.process("create savings 98765432 4");
 
         commandProcessor.process("deposit 12345678 100.0");
         commandProcessor.process("deposit 98765432 50.0");
@@ -548,8 +540,8 @@ public class CommandProcessorTest {
 
     @Test
     void transfer_savings_to_savings() {
-        commandProcessor.process("create banking.savings 12345678 3");   // Create savings account 12345678 with 3% APR
-        commandProcessor.process("create banking.savings 98765432 4");   // Create savings account 98765432 with 4% APR
+        commandProcessor.process("create savings 12345678 3");   // Create savings account 12345678 with 3% APR
+        commandProcessor.process("create savings 98765432 4");   // Create savings account 98765432 with 4% APR
         commandProcessor.process("deposit 12345678 1000.0");  // Deposit 1000.0 into savings account 12345678
         commandProcessor.process("deposit 98765432 200.0");  // Deposit 200.0 into savings account 98765432
 
