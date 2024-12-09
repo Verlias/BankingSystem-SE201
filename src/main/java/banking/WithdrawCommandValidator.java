@@ -1,7 +1,10 @@
 package banking;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
+import java.time.temporal.ChronoUnit;
+
 
 public class WithdrawCommandValidator {
     private final Bank bank;
@@ -33,6 +36,11 @@ public class WithdrawCommandValidator {
             return false; // Invalid withdrawal amount (should be positive)
         }
 
+        // Check for precision limit (two decimal places)
+        if (amount * 100 != Math.floor(amount * 100)) {
+            return false; // Reject if the amount has more than two decimal places
+        }
+
         // Retrieve account by ID from the bank
         Accounts account = bank.getAccount().get(accountId);
         if (account == null) {
@@ -50,6 +58,7 @@ public class WithdrawCommandValidator {
             return false; // Unsupported account type for withdrawal
         }
     }
+
 
     private boolean validateCheckingAccount(Checking account, double amount) {
         if (amount > 400) {
@@ -103,9 +112,13 @@ public class WithdrawCommandValidator {
                 && lastWithdrawalDate.getYear() == currentDate.getYear();
     }
 
-    // Helper method to calculate months between two dates
     private long monthsBetween(Date startDate, Date endDate) {
-        long diffInMillis = endDate.getTime() - startDate.getTime();
-        return diffInMillis / (1000L * 60 * 60 * 24 * 30);  // Approximate months
+        LocalDate startLocalDate = toLocalDate(startDate);
+        LocalDate endLocalDate = toLocalDate(endDate);
+        return ChronoUnit.MONTHS.between(startLocalDate, endLocalDate);
+    }
+
+    private LocalDate toLocalDate(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 }

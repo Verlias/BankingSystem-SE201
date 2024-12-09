@@ -232,5 +232,69 @@ public class WithdrawCommandValidatorTest {
         assertFalse(result, "Negative account numbers should be invalid.");
     }
 
+    @Test
+    void testCDAccountEarlyWithdrawalAttempt() {
+        commandProcessor.process("create banking.CD 11223344 1.2 2000");
+        // Do not pass time, so it's before 12 months
+        boolean result = commandValidator.validate("withdraw 11223344 500");
+        assertFalse(result, "Withdrawal before 12 months should be invalid");
+    }
+
+
+
+    @Test
+    void testCDAccountPartialWithdrawalNotAllowed() {
+        commandProcessor.process("create banking.CD 11223344 1.2 2000");
+        commandProcessor.process("passtime 12");
+        boolean result = commandValidator.validate("withdraw 11223344 1500");
+        assertFalse(result, "Partial withdrawal from CD should be invalid");
+    }
+
+    @Test
+    void testCheckingAccountWithdrawalExactlyAtLimit() {
+        commandProcessor.process("deposit 89456185 500");
+        boolean result = commandValidator.validate("withdraw 89456185 400");
+        assertTrue(result, "Withdrawal at exact checking account limit should be valid");
+    }
+
+    @Test
+    void testSavingsAccountWithdrawalExactlyAtLimit() {
+        commandProcessor.process("create banking.Savings 12345678 1.0");
+        commandProcessor.process("deposit 12345678 2000");
+        boolean result = commandValidator.validate("withdraw 12345678 1000");
+        assertTrue(result, "Withdrawal at exact savings account limit should be valid");
+    }
+
+    @Test
+    void testWithdrawalAmountPrecision() {
+        commandProcessor.process("deposit 89456185 300");
+        boolean result = commandValidator.validate("withdraw 89456185 0.01");
+        assertTrue(result, "Small valid withdrawal should be accepted");
+
+        result = commandValidator.validate("withdraw 89456185 0.001");
+        assertFalse(result, "Very small amounts should be invalid");
+    }
+
+    @Test
+    void testLargeWithdrawalAmount() {
+        commandProcessor.process("deposit 89456185 5000");
+        boolean result = commandValidator.validate("withdraw 89456185 1000000.0");
+        assertFalse(result, "Unreasonably large withdrawal should be invalid");
+    }
+
+    @Test
+    void testWithdrawalWithScientificNotation() {
+        boolean result = commandValidator.validate("withdraw 89456185 1e3");
+        assertFalse(result, "Scientific notation should be invalid");
+    }
+
+    @Test
+    void testWithdrawalCommandWithExtraArguments() {
+        boolean result = commandValidator.validate("withdraw 89456185 100.0 extraarg");
+        assertFalse(result, "Command with extra arguments should be invalid");
+    }
+
+
+
 
 }
