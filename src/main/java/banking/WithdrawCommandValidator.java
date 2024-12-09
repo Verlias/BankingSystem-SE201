@@ -11,11 +11,13 @@ public class WithdrawCommandValidator {
     }
 
     public boolean validate(String command) {
-        // Format of the withdraw command is: withdraw <accountId> <amount>
+        if (command == null) {
+            return false; // Null commands are invalid
+        }
         String[] parts = command.trim().split("\\s+");
 
         if (parts.length != 3) {
-            return false;  // Invalid command format
+            return false; // Invalid command format
         }
 
         String accountId = parts[1];
@@ -24,17 +26,17 @@ public class WithdrawCommandValidator {
         try {
             amount = Double.parseDouble(parts[2]);
         } catch (NumberFormatException e) {
-            return false;  // Invalid amount (not a valid number)
+            return false; // Invalid amount (not a valid number)
         }
 
         if (amount <= 0) {
-            return false;  // Invalid withdrawal amount (should be positive)
+            return false; // Invalid withdrawal amount (should be positive)
         }
 
         // Retrieve account by ID from the bank
         Accounts account = bank.getAccount().get(accountId);
         if (account == null) {
-            return false;  // Account does not exist
+            return false; // Account does not exist
         }
 
         // Check withdrawal rules for each account type
@@ -45,7 +47,7 @@ public class WithdrawCommandValidator {
         } else if (account instanceof CertificateOfDeposit) {
             return validateCDAccount((CertificateOfDeposit) account, amount);
         } else {
-            return false;  // Unsupported account type for withdrawal
+            return false; // Unsupported account type for withdrawal
         }
     }
 

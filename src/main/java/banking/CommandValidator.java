@@ -8,6 +8,12 @@ public class CommandValidator {
     }
 
     public boolean validate(String command) {
+        // Check if the command is null
+        if (command == null) {
+            System.out.println("Invalid command: null input");
+            return false;
+        }
+
         // Trim any leading or trailing spaces before processing
         command = command.trim();
 
@@ -32,4 +38,5 @@ public class CommandValidator {
         System.out.println("Unknown command: " + command);
         return false;
     }
+
 }
