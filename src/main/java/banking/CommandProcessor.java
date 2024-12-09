@@ -257,7 +257,8 @@ public class CommandProcessor {
 
 		if (account instanceof Savings || account instanceof Checking) {
 			applyAPR(account, monthsToPass);
-		} else if (account instanceof CertificateOfDeposit cdAccount) {
+		} else if (account instanceof CertificateOfDeposit) {
+			CertificateOfDeposit cdAccount = (CertificateOfDeposit) account;
 			cdAccount.passTime(monthsToPass);
 			applyAPR(cdAccount, monthsToPass);
 		}
